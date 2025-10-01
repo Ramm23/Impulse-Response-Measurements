@@ -15,7 +15,6 @@ X = zeros(N, L); % N=length of 1 FFT, L=number of fft's
 
 
 f = (0:M-1)' * (fs / M);
-% t1 = (0:L) * (R / fs); % L-1???
 t = (N/2 + (0:L-1)*R) / fs; % Uses the center of each window
 
 % Run through time signal and do DFT frame by frame
