@@ -10,8 +10,8 @@ startupHeaAudio
 
 %% User parameters
 fs = 48000;         %Hz, sampling frequency
-Tsweep = ;         %s time for sweep
-Tsilence = ; %s silence following sweep
+Tsweep = 2;         %s time for sweep           (I put 2 here)
+Tsilence = 1; %s silence following sweep        (I put 1 here)
 fstart = 5;         %Hz, Start frequency
 fstop = fs/2;       %Hz,  Stop frequency
 Tfadein = 0.1;   %s, Length of fade in 
