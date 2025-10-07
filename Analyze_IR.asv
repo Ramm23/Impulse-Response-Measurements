@@ -38,16 +38,15 @@ plot(t, EDC_log, 'LineWidth', 1.5);
 hold on; grid on;
 
 % Reference lines
-yline(-5,  '--k', 'LineWidth', 1.2, 'Label','-5 dB','LabelHorizontalAlignment','left');
-yline(-25, '--k', 'LineWidth', 1.2, 'Label','-25 dB','LabelHorizontalAlignment','left');
-yline(-60, '--k', 'LineWidth', 1.2, 'Label','-60 dB','LabelHorizontalAlignment','left');
+yline(-5,  '--', 'LineWidth', 1.2, 'Label','-5 dB','LabelHorizontalAlignment','left');
+yline(-25, '--', 'LineWidth', 1.2, 'Label','-25 dB','LabelHorizontalAlignment','left');
+yline(-60, '--', 'LineWidth', 1.2, 'Label','-60 dB','LabelHorizontalAlignment','left');
 
 xlabel('Time (s)');
 ylabel('Energy Decay [dB]');
 title('Energy Decay Curve (EDC)');
 ylim([-70 5]);   % adjust as needed
 xlim([0 t(end)]);
-legend("Channel " + string(1:size(EDCdB,1)));
 
 % Choose appropriate fitting points for the RT60 calculation
 L1 = ;

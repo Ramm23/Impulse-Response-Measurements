@@ -21,12 +21,23 @@ else
 end
 
 % Truncate
-h = 
+M = size(h,2);
+
+h_trunc = h(1:tSample,:); 
+
 
 %% Calculate EDC
 
 
 % Return time vector
-t = 
+t = (0:tSample)/fs;
+
+EDCdB = zeros(tSample,M);
+h2 = h_trunc.^2;
+
+for m=1:M
+    EDC = flipud(cumsum(flipud(h2(:,m))));  % reverse cumulative sum
+    EDCdB(:,M) = 10*log10(EDC / max(EDC));
 end
 
+end
