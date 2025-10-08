@@ -12,7 +12,7 @@ pad_size = max(0, (O + L*R) - Nx); % max makes sure pad size is >= 0
 zero_pad = zeros(pad_size, 1);
 x_padded = [x; zero_pad];
 
-X = zeros(N, L);                    % N=length of 1 FFT, L=number of fft's
+X = zeros(M, L);                    % N=length of 1 FFT, L=number of fft's
 
 
 f = (0:M-1)' * (fs / M);
