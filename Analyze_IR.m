@@ -35,8 +35,10 @@ trunctime = ;
 % Plot the EDC
 
 % Choose appropriate fitting points for the RT60 calculation
-L1 = ;
-L2 = ;
+[choice, fitRange_dB, t_knee] = simpleKneeAndWindow(h, fs);
+
+L1 = fitRange_dB(1);   % e.g., -5
+L2 = fitRange_dB(2);   % e.g., -25
 
 % Select which EDC to process
 % Calculate  the reverberation time
