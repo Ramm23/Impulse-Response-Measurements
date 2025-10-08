@@ -65,7 +65,15 @@ timeDirect = ;
 [d,r] = splitIR(h(:,1:2),fsHz,timeDirect);
 
 % Calculate the DRR
-drr = ;
+dLength = height(d);
+rLength = height(r);
+
+t_d = 0:1:dLength-1;
+t_d = t_d/fs;
+t_r = 0:1:rLength-1/fs;
+t_r = t_r/fs;
+
+drr = trapz(t_d, d.^2)./trapz(t_r, r.^2);
 
 %% ENERGY DECAY RELIEF (STFT)
 %
