@@ -8,18 +8,44 @@ clc
 addpath signals
 addpath tools
 
+%%Formatting stuff
+set(groot, 'defaultAxesFontName', 'Times New Roman');
+set(groot, 'defaultTextFontName', 'Times New Roman');
+set(groot, 'defaultAxesFontSize', 16);
+set(groot, 'defaultTextFontSize', 16);
+set(groot, 'defaultAxesLineWidth', 1);
+set(groot, 'defaultLineLineWidth', 2);
+set(groot, 'defaultFigurePaperUnits', 'centimeters');
+set(groot, 'defaultFigurePaperPosition', [0 0 14 9]); %base x height of figure
+
+
 %% user parameters
 % Sampling frequency
 fsHz = 48E3;
 
 % Impulse response
-load 22001_module1_measurements\meas_2025_10_8_12_29_20.mat
+load 22001_module1_measurements\meas_2025_10_8_13_7_24.mat
 
 %% LOAD RESPONSE
 %
 % Load impulse response
 %h = readIR(roomName,fsHz);
 h = h_norm;
+%% Plot the ETC
+
+plotETC(h_norm, fs)
+%% Plot the spectrograms
+N = 2*round(fs*20e-3/2);
+M = pow2(nextpow2(N));
+w = hann(N);
+R = M/2;
+
+[X1,t,f] = stft(h_norm(:,1),fs,w,R,M);
+[X2,t,f] = stft(y(:,1),fs,w,R,M);
+
+% 
+plotSTFT(t,f,X1,fs)
+plotSTFT(t,f,X2,fs)
 %% Trunacte and select which IRs to process
 % Truncate the IR (if needed) to remove most of the part that is just noise,
 % keeping a short part to allow estimating the noise floor.
@@ -28,38 +54,65 @@ h = h_norm;
 
 %% Calculate the EDC and reverberation time
 % Choose an appropriate truncation time for the EDC calculation
-trunctime = 4;
+trunctime = 3.5;
 
 % Calculate the EDC
+%[ EDC_log_true, t_true ] = calcEDC( h, fsHz, 12);
 [ EDC_log, t ] = calcEDC( h, fsHz, trunctime );
+%PLOYFIT THESE CURVES!!!!
+
+% Choose appropriate fitting points for the RT60 calculation
+L1 = -5;   % e.g., -5
+L2 = -35;   % e.g., -25
+
+% Select which EDC to process
+% Calculate  the reverberation time
+[reverbTime1, t1, y1] = getReverbTime( EDC_log(:,1), fsHz, L1, L2);
+[reverbTime2, t2, y2] = getReverbTime( EDC_log(:,2), fsHz, L1, L2);
+
 
 % Plot the EDC
 figure;
-plot(t, EDC_log, 'LineWidth', 1.5);
-hold on; grid on;
+hold on;
+plot(t, EDC_log(:,1), 'LineWidth', 1.5);
+plot(t1, y1, '--', 'LineWidth', 1.5)
+grid on;
 
 % Reference lines
 yline(-5,  '--k', 'LineWidth', 1.2, 'Label','-5 dB','LabelHorizontalAlignment','left');
-yline(-25, '--k', 'LineWidth', 1.2, 'Label','-25 dB','LabelHorizontalAlignment','left');
+yline(-35, '--k', 'LineWidth', 1.2, 'Label','-35 dB','LabelHorizontalAlignment','left');
 yline(-60, '--k', 'LineWidth', 1.2, 'Label','-60 dB','LabelHorizontalAlignment','left');
 
 xlabel('Time (s)');
 ylabel('Energy Decay [dB]');
-title('Energy Decay Curve (EDC)');
+title('Energy Decay Curve (EDC) - Channel 1');
 ylim([-70 5]);   % adjust as needed
 xlim([0 t(end)]);
-legend("Channel " + string(1:size(EDC_log,1)));
+legend("EDC","lin. fit",'','','','Location','southwest')
+text(0.98, 0.98, sprintf('T_{30} = %.2f s', reverbTime1),'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', 'Units','normalized');
+hold off;
 
-% Choose appropriate fitting points for the RT60 calculation
-%[choice, fitRange_dB, t_knee] = simpleKneeAndWindow(h, fs);
+figure;
+hold on;
+plot(t, EDC_log(:,2), 'LineWidth', 1.5);
+plot(t2, y2, '--', 'LineWidth', 1.5)
+grid on;
 
-L1 = -5;   % e.g., -5
-L2 = -25;   % e.g., -25
+% Reference lines
+yline(-5,  '--k', 'LineWidth', 1.2, 'Label','-5 dB','LabelHorizontalAlignment','left');
+yline(-35, '--k', 'LineWidth', 1.2, 'Label','-35 dB','LabelHorizontalAlignment','left');
+yline(-60, '--k', 'LineWidth', 1.2, 'Label','-60 dB','LabelHorizontalAlignment','left');
 
-% Select which EDC to process
-% Calculate  the reverberation time
-reverbTime1 = getReverbTime( EDC_log(:,1), fsHz, L1, L2)
-reverbTime2 = getReverbTime( EDC_log(:,2), fsHz, L1, L2)
+xlabel('Time (s)');
+ylabel('Energy Decay [dB]');
+title('Energy Decay Curve (EDC) - Channel 2');
+ylim([-70 5]);   % adjust as needed
+xlim([0 t(end)]);
+legend("EDC","lin. fit",'','','','Location','southwest')
+text(0.98, 0.98, sprintf('T_{30} = %.2f s', reverbTime2),'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', 'Units','normalized');
+hold off
+
+
 
 %% Direct-to-reverberant energy ratio
 % Select IRs with different source to receiver distances

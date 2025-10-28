@@ -43,13 +43,14 @@ m = (L2a - L1a) / (ind2 - ind1);
 b = L1 - m*ind1; 
 
 % Calculate -60 dB intercept
-%indrt = (-60 - b)/m;
-indrt = (-60)/m;
+indrt = (-60 - b)/m;
+%indrt = (-60)/m;
 %rt60 = (indrt - indmax)/fs;
 rt60 = (indrt)/fs;
 
 % Create time vector for plotting
 t = (0:size(EDCdB,1)).' / fs;
+t = (0:rt60*fs).'/fs;
 y = m*t*fs+b;
 
 % Plotting

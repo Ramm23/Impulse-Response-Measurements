@@ -59,8 +59,6 @@ R = M/2;
 % 
 
 plotSTFT(t,f,X1,fs)
-
-
 plotSTFT(t,f,X2,fs)
 %% Save and add variables of importance
 save(sprintf('meas_%d_%d_%d_%d_%d_%d.mat',fix(clock)),'s_exp','Hinv','y','h_norm','fs','Tsweep','Tsilence');
